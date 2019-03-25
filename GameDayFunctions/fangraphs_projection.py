@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 class Projection:
-    ''' Read and Store Fangraphs Projection files in instance of class Projection.  
+    ''' Read and Store Fangraphs Projection files in instance of class Projection.
 
     Parameters
     ----------
@@ -12,7 +12,7 @@ class Projection:
 
     model : string [optional]
         Choose from ZiPS (default), Steamer, Fans
-    
+
     year: int [optional]
         year of projections
 
@@ -30,7 +30,7 @@ class Projection:
         - precompute_statlines
 
     '''
-    
+
     def __init__(self, model = 'ZiPS', year = 2019, path_data = '/data/baseball/Fangraphs/projections/'):
         self.statline = {}
         self.hitters_rank = {}
@@ -41,7 +41,7 @@ class Projection:
         for file in os.listdir(path_data+str(year)+'/'):
             if file.startswith(model) & ~file.endswith('Hitters.csv') & ~file.endswith('Pitchers.csv') :
                 #print(os.path.join(path_data+str(year)+'/', file))
-                df = pd.read_csv(os.path.join(path_data+str(year)+'/', file))
+                df = pd.read_csv(os.path.join(path_data+str(year)+'/', file), index_col = 'playerid')
                 fn = str.split(file,'.')[0][-2:]
                 if fn == '_C': fn = 'C'
                 #print fn
@@ -51,7 +51,7 @@ class Projection:
                     self.hitters_stats = df
                 else:
                     self.hitters_stats = pd.concat([self.hitters_stats, df])
-                
+
                 #Read in Rotographs Ranking Predictions
                 if fn != 'DH':
                     kk = 1
@@ -62,9 +62,9 @@ class Projection:
                         ind = self.hitters_stats['Name'] == plr
                         self.hitters_stats['Rank'][ind] = kk
                         kk += 1
-                    
+
         self.hitters_stats['1B'] = self.hitters_stats['H'] - self.hitters_stats['2B'] - self.hitters_stats['3B'] - self.hitters_stats['HR']
-        
+
         # Read in Pitchers for Year and Position
         for file in os.listdir(path_data+str(year)+'/'):
             if file.startswith(model) & file.endswith('Pitchers.csv'):
@@ -77,7 +77,7 @@ class Projection:
         self.pitchers_stats['SV']  = 0
         self.pitchers_stats['BSV']  = 0
 
-        #Read in Rotographs Ranking Predictions        
+        #Read in Rotographs Ranking Predictions
         pitcher_positions = ['SP','RP']
         for fn in pitcher_positions:
             k = 1
@@ -96,30 +96,30 @@ class Projection:
                     self.pitchers_stats['SV'][ind] = np.floor(self.pitchers_stats['IP'][ind] * 0.5 * (1./self.pitchers_stats['WHIP'][ind]))
                     self.pitchers_stats['BSV'][ind] = np.floor(self.pitchers_stats['IP'][ind] * 0.05 * (1./self.pitchers_stats['WHIP'][ind]))
 
-    def precompute_statlines(self, 
-                             batter_categories  = ['R','1B','2B', '3B','HR','RBI','SB','BB','AVG','OPS'], 
+    def precompute_statlines(self,
+                             batter_categories  = ['R','1B','2B', '3B','HR','RBI','SB','BB','AVG','OPS'],
                              pitcher_categories = ['W', 'L','CG','SHO','SV','BB','SO','ERA','WHIP','BSV' ]):
         b_col_names = batter_categories
         if 'AB' not in b_col_names:
             b_col_names.extend(['AB'])
         if 'Position' not in b_col_names:
-            b_col_names.extend(['Position'])    
+            b_col_names.extend(['Position'])
         if 'Rank' not in b_col_names:
-            b_col_names.extend(['Rank']) 
+            b_col_names.extend(['Rank'])
         if 'playerid' not in b_col_names:
             b_col_names.extend(['playerid'])
         if 'Name' not in b_col_names:
-            b_col_names.extend(['Name'])     
+            b_col_names.extend(['Name'])
         self.statline['batters'] = self.hitters_stats[b_col_names]#.groupby('Name').mean()
         self.statline['batters']['Drafted'] = 'False'
-        
+
         p_col_names = pitcher_categories
         if 'IP' not in p_col_names:
             p_col_names.extend(['IP'])
         if 'Position' not in p_col_names:
-            p_col_names.extend(['Position'])   
+            p_col_names.extend(['Position'])
         if 'Rank' not in p_col_names:
-            p_col_names.extend(['Rank'])  
+            p_col_names.extend(['Rank'])
         if 'playerid' not in p_col_names:
             p_col_names.extend(['playerid'])
         if 'Name' not in p_col_names:
