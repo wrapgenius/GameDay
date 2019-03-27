@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
+pd.options.mode.chained_assignment = None
 
 class Projection:
     ''' Read and Store Fangraphs Projection files in instance of class Projection.
@@ -106,8 +107,8 @@ class Projection:
             b_col_names.extend(['Position'])
         if 'Rank' not in b_col_names:
             b_col_names.extend(['Rank'])
-        if 'playerid' not in b_col_names:
-            b_col_names.extend(['playerid'])
+        #if 'playerid' not in b_col_names:
+        #    b_col_names.extend(['playerid'])
         if 'Name' not in b_col_names:
             b_col_names.extend(['Name'])
         self.statline['batters'] = self.hitters_stats[b_col_names]#.groupby('Name').mean()
@@ -120,8 +121,8 @@ class Projection:
             p_col_names.extend(['Position'])
         if 'Rank' not in p_col_names:
             p_col_names.extend(['Rank'])
-        if 'playerid' not in p_col_names:
-            p_col_names.extend(['playerid'])
+        #if 'playerid' not in p_col_names:
+        #    p_col_names.extend(['playerid'])
         if 'Name' not in p_col_names:
             p_col_names.extend(['Name'])
         self.statline['pitchers'] = self.pitchers_stats[p_col_names]#.groupby('Name').mean()
