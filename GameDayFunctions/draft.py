@@ -56,7 +56,6 @@ class Draft:
         #pitcher_categories = ['W', 'L','CG','SHO','SV','BB','SO','ERA','WHIP','BSV' ]
         self.draftees  = pd.DataFrame()
         for psn in self.batters:
-            #print(psn)
             if psn != 'UTIL':
                 ind_position_df = (self.projection.statline['batters']['Position']==psn) & (self.projection.statline['batters']['Drafted']=='False')
                 nlst = min(len(np.unique(self.projection.statline['batters'][ind_position_df]['Name'])), self.number_teams * self.open_positions[psn] * 2)
